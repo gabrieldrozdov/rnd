@@ -1,0 +1,54 @@
+<style>
+	@font-face {
+		font-family: "Limkin";
+		src: url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.ttf") format(truetype),
+			url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff") format(woff),
+			url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff2") format(woff2);
+		font-weight: 100 900;
+	}
+	body {
+		background-color: black;
+		font-family: "Limkin", sans-serif;
+		font-variation-settings: "wght" 900, "SRFF" 0;
+	}
+	.container {
+		filter: blur(20px) brightness(150%);
+	}
+	div {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		animation: grow-shrink 5s infinite alternate ease-in-out;
+		--grow-size: 100vw;
+		color: transparent;
+		-webkit-text-stroke: 10px var(--primary);
+		/* mix-blend-mode: difference; */
+	}
+	@keyframes grow-shrink {
+		from {
+			font-size: calc(var(--grow-size) / 10);
+		}
+		to {
+			font-size: var(--grow-size);
+		}
+	}
+</style>
+
+<div class="container"></div>
+
+<script>
+	let container = document.querySelector('.container');
+	function generateElements(inputString) {
+		let temp = '';
+		let i = 0;
+		for (let letter of inputString) {
+			let index = i/inputString.length;
+			let primary = `hsl(${index*360}deg, 100%, 50%)`;
+			temp += `<div style="animation-delay: ${-(index)*5}s; --primary: ${primary};">${letter}</div>`;
+			i++;
+		}
+		container.innerHTML = temp;
+	}
+	generateElements('abcdefghijklmnopqrstuvwxyz');
+</script>

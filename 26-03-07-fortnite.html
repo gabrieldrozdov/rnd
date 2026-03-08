@@ -1,0 +1,140 @@
+<style>
+	body {
+		background-color: var(--primary);
+	}
+	div {
+		position: fixed;
+		width: 50vmax;
+		height: 50vmax;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) rotate(0deg) scale(1);
+		transition: transform 1s cubic-bezier(0.87, 0, 0.13, 1);
+		background-color: var(--secondary);
+		transform-style: preserve-3d;
+		mix-blend-mode: difference;
+	}
+</style>
+
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+
+<script>
+	let body = document.querySelector('body');
+	let divs = document.querySelectorAll('div');
+	function init() {
+		let i = 0;
+		for (let div of divs) {
+			div.style.transitionDelay = i/divs.length + "s";
+			i++;
+		}
+		move();
+	}
+	function move() {
+		let r1 = Math.floor(Math.random()*256);
+		let g1 = Math.floor(Math.random()*256);
+		let b1 = Math.floor(Math.random()*256);
+		let r2 = 255-r1;
+		let g2 = 255-r1;
+		let b2 = 255-r1;
+		body.style.setProperty('--primary', `rgb(${r1}, ${g1}, ${b1})`);
+		body.style.setProperty('--secondary', `rgb(${r2}, ${g2}, ${b2})`);
+
+		let transform = `translate(${Math.random()*100-100}%, ${Math.random()*100-100}%) rotateX(${Math.random()*180-90}deg) rotateY(${Math.random()*180-90}deg) rotateZ(${Math.random()*180-90}deg)`;
+		for (let div of divs) {
+			div.style.transform = transform;
+		}
+		setTimeout(move, 2000);
+	}
+	init();
+</script>

@@ -1,0 +1,166 @@
+/* fonts */
+@font-face {
+	font-family: "Limkin";
+	src: url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.ttf") format(truetype),
+		url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff") format(woff),
+		url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff2") format(woff2);
+	font-weight: 100 900;
+}
+@font-face {
+	font-family: 'Geist Mono';
+	src: url('/assets/fonts/GeistMono-VariableFont_wght.ttf') format('truetype');
+	font-weight: 100 900;
+}
+
+/* base styles */
+:root {
+	--pink: #ff0055;
+	--black: #000;
+	--offblack: hsl(0, 0%, 10%);
+	--white: #fff;
+	--offwhite: hsl(0, 0%, 90%);
+	--font-size: 10px;
+}
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+	overscroll-behavior: none;
+	font-size: var(--font-size);
+	line-height: 1.2em;
+	font-weight: 600;
+}
+*::-webkit-scrollbar {
+    display: none;
+}
+body {
+	font-family: "Geist Mono", monospace;
+	--primary: black;
+	--secondary: white;
+	--black: var(--primary);
+	--white: var(--secondary);
+	background-color: var(--black);
+	color: var(--black);
+}
+body[data-invert="true"] {
+	--black: var(--secondary);
+	--white: var(--primary);
+}
+
+/* structure */
+.container {
+	display: grid;
+	grid-template-rows: 1.2em 1fr;
+	height: 100dvh;
+	gap: 1px;
+	opacity: 0;
+	animation: container .2s forwards;
+}
+@keyframes container {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+.header {
+	background-color: var(--white);
+	display: flex;
+	overflow: scroll;
+	white-space: nowrap;
+}
+.title {
+	flex-grow: 1;
+}
+.title a {
+	display: block;
+	color: var(--black);
+	text-decoration: none;
+	padding: 0 .2em;
+}
+.title a:hover {
+	background-color: var(--black);
+	color: var(--white);
+}
+.controls {
+	border-left: 1px solid var(--black);
+	display: flex;
+	gap: 1px;
+	background-color: var(--black);
+}
+.controls button {
+	border: unset;
+	background-color: var(--white);
+	padding: unset;
+	border-radius: unset;
+	font: inherit;
+	color: var(--black);
+	cursor: pointer;
+	text-transform: uppercase;
+	padding: 0 .2em;
+}
+.controls button:hover {
+	background-color: var(--black);
+	color: var(--white);
+}
+.content {
+	width: 100%;
+	height: 100%;
+	display: grid;
+	gap: 1px;
+	grid-template-columns: 1fr 2fr 3fr;
+	overflow: hidden;
+}
+.nav {
+	display: flex;
+	flex-direction: column;
+	overflow-y: scroll;
+	height: 100%;
+	max-height: 100%;
+	overflow-wrap: anywhere;
+	word-break: break-all;
+	background-color: var(--white);
+}
+.nav a {
+	text-decoration: none;
+	color: var(--black);
+	padding: 0 .2em;
+}
+.nav a[data-active="1"] {
+	background-color: var(--black);
+	color: var(--white);
+}
+.nav a:hover {
+	background-color: var(--black);
+	color: var(--white);
+}
+.code {
+	font-family: inherit;
+	font-weight: inherit;
+	overflow-y: scroll;
+	height: 100%;
+	max-height: 100%;
+	tab-size: 4ch;
+	background-color: var(--white);
+	padding: 0 .2em;
+}
+.code:focus {
+	outline: unset;
+}
+.preview {
+	width: 100%;
+	height: 100%;
+	border: unset;
+	background-color: var(--white);
+}
+
+/* mobile */
+@media only screen and (max-width: 600px) {
+	.content {
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr 2fr 3fr;
+	}
+}

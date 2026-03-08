@@ -19,6 +19,7 @@ async function initDemo() {
 			preview.srcdoc = activeDemoData;
 			let activeElement = document.querySelector(`[data-demo="${activeDemo}"]`);
 			activeElement.dataset.active = 1;
+			body.dataset.active = 1;
 			changeColors();
 		});
 	}
@@ -33,6 +34,9 @@ code.addEventListener('input', () => {
 })
 
 let fontSize = 10;
+if (window.innerWidth < 600) {
+	fontSize = 15;
+}
 function changeFontSize() {
 	if (fontSize == 10) {
 		fontSize = 15;

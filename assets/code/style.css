@@ -91,6 +91,9 @@ body[data-invert="true"] {
 	gap: 1px;
 	background-color: var(--black);
 }
+body[data-active="0"] .controls {
+	display: none;
+}
 .controls button {
 	border: unset;
 	background-color: var(--white);
@@ -154,11 +157,14 @@ body[data-invert="true"] {
 	width: 100%;
 	height: 100%;
 	border: unset;
-	background-color: var(--white);
+	background-color: white;
 }
 
 /* mobile */
 @media only screen and (max-width: 600px) {
+	:root {
+		--font-size: 15px;
+	}
 	.content {
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr 2fr 3fr;

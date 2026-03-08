@@ -1,0 +1,51 @@
+<style>
+	body {
+		margin: 0;
+		font-family: sans-serif;
+		font-size: 10vmin;
+	}
+</style>
+<body></body>
+<script>
+	let input = "I’m not sure. ";
+	let body = document.querySelector('body');
+	let i = 0;
+	function create() {
+		// new text
+		let elmnt = document.createElement('span');
+		if (Math.random() < .9) {
+			elmnt.innerText = input[i];
+		} else {
+			elmnt.innerText = input[Math.floor(Math.random()*input.length)]
+		}
+
+		// style
+		if (Math.random() < .5) {
+			elmnt.style.backgroundColor = "black";
+			elmnt.style.color = "white";
+		}
+
+		body.appendChild(elmnt)
+
+		// detect starting over
+		if (body.offsetHeight > window.innerHeight) {
+			body.innerHTML = '';
+		}
+
+		// iterate
+		i++;
+		if (i == input.length) {
+			i = 0;
+		}
+
+		// delay
+		let delay = Math.random()*500;
+		if (Math.random() < .9) {
+			delay = Math.random()*50
+		}
+
+		// loop
+		setTimeout(create, delay);
+	}
+	create();
+</script>

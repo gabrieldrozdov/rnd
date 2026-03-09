@@ -1,0 +1,68 @@
+<style>
+	body {
+		margin: 0;
+	}
+	canvas {
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+
+<script>
+	let font;
+	let i = 300;
+	let inputString = "hello!";
+
+	function preload() {
+		font = loadFont('https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.ttf');
+	}
+
+	function setup() {
+		createCanvas(windowWidth, windowHeight);
+		strokeWeight(1);
+	}
+
+	function draw() {
+		background(255);
+
+		fill(0)
+		circle(mouseX, mouseY, 20)
+
+		textSize(i);
+		let w = textWidth(inputString);
+
+		let percentX = mouseX/windowWidth;
+		let percentY = mouseY/windowHeight;
+
+		strokeWeight(10*percentY)
+
+		let points = font.textToPoints(
+			inputString,
+			windowWidth/2 - w/2,
+			windowHeight/2 + i/3,
+			i,
+			{ sampleFactor:  0.1*percentX }
+		);
+
+		for (let index=0; index<points.length; index++) {
+			let point = points[index];
+			let interval = round(random(1, 5))
+			let nextPoint;
+			if (index+interval > points.length-1) {
+				nextPoint = points[0]
+			} else {
+				nextPoint = points[index+interval]
+			}
+			line(
+				point.x, point.y,
+				nextPoint.x, nextPoint.y
+			)
+		}
+	}
+
+	function windowResized() {
+		resizeCanvas(windowWidth, windowHeight);
+	}
+</script>

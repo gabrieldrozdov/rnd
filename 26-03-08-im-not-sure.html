@@ -7,6 +7,11 @@
 </style>
 <body></body>
 <script>
+	let sounds = [];
+	let soundsActive = false;
+	for (let i=1; i<19; i++) {
+		sounds.push(new Audio(`/assets/sounds/26-03-08-im-not-sure-${i}.mp3`));
+	}
 	let input = "I’m not sure. ";
 	let body = document.querySelector('body');
 	let i = 0;
@@ -20,11 +25,21 @@
 		}
 
 		// style
+		let letterStyle = 1;
 		if (Math.random() < .5) {
 			elmnt.style.backgroundColor = "black";
 			elmnt.style.color = "white";
+			letterStyle = 2;
 		}
 
+		if (soundsActive) {
+			let randomSound = sounds[Math.floor(Math.random()*9)];
+			if (letterStyle == 2) {
+				randomSound = sounds[Math.floor(Math.random()*9+9)];
+			}
+			randomSound.volume = Math.random();
+			randomSound.play();
+		}
 		body.appendChild(elmnt)
 
 		// detect starting over
@@ -39,13 +54,15 @@
 		}
 
 		// delay
-		let delay = Math.random()*500;
+		let delay = Math.random()*600;
 		if (Math.random() < .9) {
-			delay = Math.random()*50
+			delay = Math.random()*150
 		}
 
 		// loop
 		setTimeout(create, delay);
 	}
 	create();
+
+	window.addEventListener('click', () => {soundsActive=true});
 </script>

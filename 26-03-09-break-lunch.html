@@ -1,0 +1,69 @@
+<style>
+	body {
+		margin: 0;
+	}
+	canvas {
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+
+<script>
+	let font;
+	let i=0;
+
+	function preload() {
+		font = loadFont('https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.ttf');
+	}
+
+	function setup() {
+		createCanvas(windowWidth, windowHeight);
+	}
+
+	let colorInverse = false;
+	let inputString = "abc";
+	function draw() {
+
+		textSize(i);
+		let w = textWidth(inputString);
+		// let d = textDescent(inputString);
+
+		let points = font.textToPoints(
+			inputString,
+			windowWidth/2 - w/2,
+			windowHeight/2 + i/3,
+			i,
+			{ sampleFactor:  0.5 }
+		);
+
+		strokeWeight(1);
+		if (colorInverse) {
+			fill(0);
+			stroke(255);
+		} else {
+			fill(255);
+			stroke(0);
+		}
+
+		// blendMode(MULTIPLY);
+
+		for (let p of points) {
+			triangle(
+				p.x + random(-30,30), p.y + random(-30,30),
+				p.x + random(-30,30), p.y + random(-30,30),
+				p.x + random(-30,30), p.y + random(-30,30),
+			)
+		}
+		i += 10;
+		if (i > 600) {
+			i = 1;
+			colorInverse = !colorInverse;
+		}
+	}
+
+	function windowResized() {
+		resizeCanvas(windowWidth, windowHeight);
+	}
+</script>

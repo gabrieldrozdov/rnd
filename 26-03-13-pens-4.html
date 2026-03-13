@@ -1,0 +1,104 @@
+<head>
+	<style>
+		body {
+			margin: 0;
+		}
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+</head>
+
+<body>
+
+	<script>
+		let penInfo = [];
+		let hues = ['black', 'white'];
+
+		function initPens() {
+			for (let i = 0; i < 100; i++) {
+				let x = random(windowWidth);
+				let y = random(windowHeight);
+				let w = random(10, 100);
+				penInfo.push({
+					"target": [random(windowWidth), random(windowHeight)],
+					"pos": [x, y],
+					"prevPos": [x, y],
+					"vel": [0, 0],
+					"hue": random(hues),
+					"w": w,
+					"h": random(2, 20),
+					"angle": 0,
+					"prevAngle": 0
+				});
+			}
+		}
+
+		function setTarget(index) {
+			penInfo[index].target = [random(windowWidth), random(windowHeight)];
+		}
+
+		function setup() {
+			createCanvas(windowWidth, windowHeight);
+			noStroke();
+			initPens();
+		}
+
+		function draw() {
+			background(255)
+			for (let i = 0; i < penInfo.length; i++) {
+				let pen = penInfo[i];
+				pen.target = [random(mouseX-500, mouseX+500), random(mouseY-500, mouseY+500)];
+				pen.prevPos = [pen.pos[0], pen.pos[1]];
+				pen.prevAngle = pen.angle;
+
+				let delta = [pen.target[0] - pen.pos[0], pen.target[1] - pen.pos[1]];
+				pen.vel[0] = (pen.vel[0] + delta[0] / 1000) * 0.98;
+				pen.vel[1] = (pen.vel[1] + delta[1] / 1000) * 0.98;
+
+				pen.pos[0] += pen.vel[0];
+				pen.pos[1] += pen.vel[1];
+
+				let targetAngle = atan2(pen.vel[1], pen.vel[0]);
+				let diff = targetAngle - pen.angle;
+				while (diff < -PI) diff += TWO_PI;
+				while (diff > PI) diff -= TWO_PI;
+				pen.angle += diff * 0.15; 
+
+				fill(pen.hue);
+
+				// GAP FIX: Calculate distance AND rotational travel
+				let d = dist(pen.prevPos[0], pen.prevPos[1], pen.pos[0], pen.pos[1]);
+				let angleDiff = pen.angle - pen.prevAngle;
+				while (angleDiff < -PI) angleDiff += TWO_PI;
+				while (angleDiff > PI) angleDiff -= TWO_PI;
+				
+				// We calculate steps based on movement PLUS the arc length of the rotation
+				// (pen.w / 2) * abs(angleDiff) estimates how far the tip of the pen traveled
+				let rotationTravel = (pen.w / 2) * abs(angleDiff);
+				let steps = ceil(max(d, rotationTravel) / 0.5); // 0.5 for sub-pixel density
+
+				for (let j = 0; j <= steps; j++) {
+					let t = j / steps;
+					let x = lerp(pen.prevPos[0], pen.pos[0], t);
+					let y = lerp(pen.prevPos[1], pen.pos[1], t);
+					let currentA = pen.prevAngle + (angleDiff * t);
+					
+					push();
+					translate(x, y);
+					rotate(currentA);
+					// Using a slightly larger ellipse or a rect can help fill microscopic gaps
+					ellipse(0, 0, pen.w, pen.h);
+					pop();
+				}
+			}
+		}
+
+		function windowResized() {
+			resizeCanvas(windowWidth, windowHeight);
+			background(127);
+		}
+	</script>
+</body>

@@ -1,0 +1,117 @@
+<head>
+	<style>
+		body {
+			margin: 0;
+		}
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+		#input {
+			position: fixed;
+			bottom: 20px;
+			left: 20px;
+			right: 20px;
+			text-align: center;
+			font-size: 40px;
+			border: 1px solid black;
+			background-color: unset;
+		}
+		#input:focus {
+			outline: unset;
+		}
+		#slider {
+			position: fixed;
+			bottom: 80px;
+			left: 20px;
+			right: 20px;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+</head>
+
+<body>
+	<input type="text" id="input" oninput="updateString(this.value)">
+	<input type="range" min="1" max="1000" value="100" id="slider" oninput="updateFontSize(this.value)">
+	<input type="range" min="5" max="100" value="10" id="slider" oninput="updateSampling(this.value)" style="bottom: 100px;">
+	<input type="range" min="1" max="30" value="1" id="slider" oninput="updateStroke(this.value)" style="bottom: 120px;">
+
+	<script>
+		let font;
+		let inputString = "Aa";
+		let size = 100;
+		let sample = .1;
+		let weight = 1;
+		let i=0;
+		function updateString(newString) {
+			inputString = newString;
+		}
+		function updateFontSize(newSize) {
+			size = newSize;
+		}
+		function updateSampling(newSample) {
+			sample = newSample/100;
+		}
+		function updateStroke(newStroke) {
+			weight = newStroke;
+		}
+		function preload() {
+			font = loadFont('https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.ttf');
+		}
+		function setup() {
+			createCanvas(windowWidth, windowHeight);
+		}
+		function gradientLine(x1, y1, x2, y2, color1, color2) {
+			// CREDIT: https://editor.p5js.org/odmundeetgen/sketches/qqmp0fVSK
+			// linear gradient from start to end of line
+			var grad = this.drawingContext.createLinearGradient(x1, y1, x2, y2);
+			grad.addColorStop(0, color1);
+			grad.addColorStop(1, color2);
+
+			this.drawingContext.strokeStyle = grad;
+
+			line(x1, y1, x2, y2);
+		}
+		function draw() {
+			background('white');
+	
+			textFont(font);
+			textSize(size);
+			let bounds = font.textBounds(inputString, 0, 0, size);
+			console.log(bounds)
+			let w = bounds.w;
+			let h = bounds.h;
+			console.log(textWidth(inputString))
+	
+			let percentX = mouseX/windowWidth;
+			let percentY = mouseY/windowHeight;
+	
+			let points = font.textToPoints(
+				inputString,
+				windowWidth/2 - w/2,
+				windowHeight/2 + h/3,
+				size,
+				{ sampleFactor:  sample }
+			);
+	
+			strokeWeight(weight)
+			for (let index=0; index<points.length; index++) {
+				let point = points[index];
+				let nextPoint = points[round(i*points.length)];
+				gradientLine(
+					point.x, point.y,
+					nextPoint.x, nextPoint.y,
+					'black', 'white'
+				)
+			}
+			i += 0.01;
+			if (i > 1) {
+				i = 0;
+			}
+		}
+	
+		function windowResized() {
+			resizeCanvas(windowWidth, windowHeight);
+		}
+	</script>
+</body>

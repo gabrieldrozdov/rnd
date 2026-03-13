@@ -61,8 +61,13 @@ function changeColors() {
 	let r2 = 255-r1;
 	let g2 = 255-g1;
 	let b2 = 255-b1;
-	body.style.setProperty('--primary', `oklch(100% 0.25 ${Math.random()*360})`);
-	body.style.setProperty('--secondary', `oklch(50% 0.25 ${Math.random()*360})`);
+	if (Math.random() < .5) {
+		body.style.setProperty('--primary', `oklch(100% 0.25 ${Math.random()*360})`);
+		body.style.setProperty('--secondary', `oklch(50% 0.25 ${Math.random()*360})`);
+	} else {
+		body.style.setProperty('--primary', `oklch(50% 0.25 ${Math.random()*360})`);
+		body.style.setProperty('--secondary', `oklch(100% 0.25 ${Math.random()*360})`);
+	}
 }
 
 function downloadDemo() {

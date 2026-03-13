@@ -1,0 +1,89 @@
+<head>
+	<style>
+		body {
+			margin: 0;
+		}
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+</head>
+
+<body>
+
+	<script>
+		let penInfo = [];
+		for (let i=0; i<10; i++) {
+			penInfo.push({
+				"target": [0,0],
+				"pos": [0,0],
+				"vel": [0,0],
+				"hue": 0,
+			})
+		}
+
+		function setTarget(index) {
+			penInfo[index].target = [random(0, windowWidth), random(0, windowHeight)];
+		}
+
+		function setup() {
+			createCanvas(windowWidth, windowHeight);
+			noStroke();
+			for (let i=0; i<penInfo.length; i++) {
+				penInfo[i].pos = [random(0, windowWidth), random(0, windowHeight)];
+				penInfo[i].hue = round(random(0, 360));
+				setTarget(i);
+			}
+		}
+
+		function draw() {
+			for (let i=0; i<penInfo.length; i++) {
+				let pen = penInfo[i];
+
+				let delta = [
+					pen.target[0] - pen.pos[0],
+					pen.target[1] - pen.pos[1],
+				];
+				pen.vel = [
+					pen.vel[0] + delta[0] / 1000,
+					pen.vel[1] + delta[1] / 1000
+				];
+
+				if (pen.vel[0] > 30) {
+					pen.vel[0] = 30;
+				} else if (pen.vel[0] < -30) {
+					pen.vel[0] = -30;
+				}
+				if (pen.vel[1] > 30) {
+					pen.vel[1] = 30;
+				} else if (pen.vel[1] < -30) {
+					pen.vel[1] = -30;
+				}
+
+				pen.pos = [
+					pen.pos[0] + pen.vel[0],
+					pen.pos[1] + pen.vel[1],
+				];
+
+				push();
+				let angle = atan2(pen.vel[1], pen.vel[0]);
+				fill(`hsl(${pen.hue}, 100%, 50%)`); 
+				translate(pen.pos[0], pen.pos[1]);
+				rotate(angle);
+				ellipse(0, 0, 100, 20);
+				pop();
+			}
+		}
+		setInterval(() => {
+			for (let i=0; i<penInfo.length; i++) {
+				setTarget(i);
+			}
+		}, 1000)
+	
+		function windowResized() {
+			resizeCanvas(windowWidth, windowHeight);
+		}
+	</script>
+</body>

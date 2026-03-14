@@ -1,0 +1,81 @@
+<style>
+	body {
+		background-color: var(--primary);
+	}
+	.slinky {
+		position: fixed;
+		mix-blend-mode: difference;
+	}
+	.slinky div {
+		position: absolute;
+		width: 20vmin;
+		height: 20vmin;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) rotate(0deg) scale(1);
+		transition: transform 1s;
+		background-color: var(--primary);
+		/* border: 3px solid var(--primary); */
+		transform-style: preserve-3d;
+		/* border-radius: 50%; */
+		/* mix-blend-mode: difference; */
+	}
+</style>
+
+<body>
+	<script>
+		let body = document.querySelector('body');
+		let r1 = Math.floor(Math.random()*256);
+		let g1 = Math.floor(Math.random()*256);
+		let b1 = Math.floor(Math.random()*256);
+		let r2 = 255-r1;
+		let g2 = 255-r1;
+		let b2 = 255-r1;
+		body.style.setProperty('--primary', `rgb(${r1}, ${g1}, ${b1})`);
+		body.style.setProperty('--secondary', `rgb(${r2}, ${g2}, ${b2})`);
+
+		let slinkies = document.querySelectorAll('.slinky');
+		function init() {
+			let totalSlinkies = Math.round(Math.random()*20+5);
+			for (let i=0; i<totalSlinkies; i++) {
+				let slinky = document.createElement('div');
+				slinky.classList.add('slinky');
+				slinky.style.top = Math.random()*100+"vh";
+				slinky.style.left = Math.random()*100+"vw";
+				body.appendChild(slinky);
+				let r1 = Math.floor(Math.random()*256);
+				let g1 = Math.floor(Math.random()*256);
+				let b1 = Math.floor(Math.random()*256);
+				let r2 = 255-r1;
+				let g2 = 255-r1;
+				let b2 = 255-r1;
+				slinky.style.setProperty('--primary', `rgb(${r1}, ${g1}, ${b1})`);
+				slinky.style.setProperty('--secondary', `rgb(${r2}, ${g2}, ${b2})`);
+				let totalSlinks = Math.round(Math.random()*20+30);
+				for (let j=0; j<totalSlinks; j++) {
+					slinky.appendChild(document.createElement('div'));
+				}
+				move(slinky);
+			}
+		}
+		function move(slinky) {
+			let delay = Math.random()*2000+250;
+			let divs = slinky.querySelectorAll('div');
+
+			// move elements
+			let transform = `translate(calc(${Math.random()*100-50}vw - 50%), calc(${Math.random()*100-50}dvh - 50%)) rotateX(${Math.random()*90-45}deg) rotateY(${Math.random()*90-45}deg) rotateZ(${Math.random()*90-45}deg)`;
+			let i = 0;
+			for (let div of divs) {
+				div.style.transitionDelay = `${(i/divs.length)*delay}ms`;
+				setTimeout(() => {
+					div.style.transform = transform;
+				}, 50)
+				i++;
+			}
+
+			// loop
+			setTimeout(() => {move(slinky)}, delay+Math.random()*1000);
+		}
+		init();
+	</script>
+</body>

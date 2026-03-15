@@ -55,12 +55,6 @@ function invertColors() {
 }
 
 function changeColors() {
-	let r1 = Math.round(Math.random()*255);
-	let g1 = Math.round(Math.random()*255);
-	let b1 = Math.round(Math.random()*255);
-	let r2 = 255-r1;
-	let g2 = 255-g1;
-	let b2 = 255-b1;
 	if (Math.random() < .5) {
 		body.style.setProperty('--primary', `oklch(100% 0.25 ${Math.random()*360})`);
 		body.style.setProperty('--secondary', `oklch(50% 0.25 ${Math.random()*360})`);

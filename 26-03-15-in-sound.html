@@ -1,0 +1,240 @@
+<head>
+	<script src="http://unpkg.com/tone"></script>
+	<style>
+		@font-face {
+			font-family: "Limkin";
+			src: url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.ttf") format(truetype),
+				url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff") format(woff),
+				url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff2") format(woff2);
+			font-weight: 100 900;
+		}
+		body {
+			background-color: var(--primary);
+			margin: 0;
+			font-family: "Limkin";
+			font-variation-settings: "wght" 600, "SRFF" 0;
+			font-size: 15vmin;
+			line-height: .8em;
+			letter-spacing: -0.04em;
+		}
+		.container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100dvh;
+			text-align: center;
+			overflow: hidden;
+		}
+		.slinky {
+			position: relative;
+		}
+		.letter {
+			color: transparent;
+		}
+		.spacer {
+			height: 0;
+		}
+		.slinky div {
+			top: 0;
+			left: 0;
+			position: absolute;
+			transform: rotate(0deg) scale(1);
+			transition: 1s linear(0, -0.008 11%, -0.025 14.6%, -0.054 17.9%, -0.152 24.1%, -0.408 35%, -0.439 37.5%, -0.436 39.6%, -0.405 41.3%, -0.35 42.8%, -0.156 45.6%, 0.153 48.1%, 1.05 53.4%, 1.284 56%, 1.413 59%, 1.441 61.5%, 1.418 64.4%, 1.146 76.2%, 1.047 82.7%, 1.023 85.8%, 1.008 89.3%, 1), font-size 0s;;
+			transform-style: preserve-3d;
+			color: var(--secondary);
+			-webkit-text-stroke: 3px black;
+			paint-order: stroke fill;
+			text-shadow: unset;
+		}
+		.slinky div:nth-child(2) {
+			color: var(--primary);
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="container-text"></div>
+	</div>
+	<script>
+		/* sounds */
+		let synthIn1 = new Tone.PolySynth();
+		synthIn1.set({
+			oscillator: {
+				type: "sawtooth"
+			},
+			envelope: {
+				attack: 0.75,
+				decay: 1,
+				sustain: 0,
+				release: 1
+			},
+			volume: -15
+		}).toDestination();
+
+		let synthIn2 = new Tone.PolySynth();
+		synthIn2.set({
+			oscillator: {
+				type: "square"
+			},
+			envelope: {
+				attack: 0.75,
+				decay: 1,
+				sustain: 0,
+				release: 1
+			},
+			volume: -15
+		}).toDestination();
+
+		let synthOut1 = new Tone.PolySynth();
+		synthOut1.set({
+			oscillator: {
+				type: "sine"
+			},
+			envelope: {
+				attack: 0.5,
+				decay: 5,
+				sustain: 0.5,
+				release: 0.25
+			},
+			volume: -15
+		}).toDestination();
+		
+		let synthOut2 = new Tone.PolySynth();
+		synthOut2.set({
+			oscillator: {
+				type: "fatsine"
+			},
+			envelope: {
+				attack: 0.5,
+				decay: 5,
+				sustain: 0.5,
+				release: 0.25
+			},
+			volume: -15
+		}).toDestination();
+
+		let notes = ["Eb","G","Bb","D"];
+		function playNote(direction, note) {
+			if (direction) {
+				if (Math.random() < .5) {
+					synthIn1.triggerAttackRelease(note, "4n");
+				} else {
+					synthIn2.triggerAttackRelease(note, "4n");
+				}
+			} else {
+				if (Math.random() < .5) {
+					synthOut1.triggerAttackRelease(note, "4n");
+				} else {
+					synthOut2.triggerAttackRelease(note, "4n");
+				}
+			}
+		}
+
+		// animation
+		const sourceText = "No Replica";
+		const totalSlinkies = 20;
+		const body = document.querySelector('body');
+		const container = document.querySelector('.container-text');
+
+		function setBackgroundColor() {
+			let color1 = Math.random()*360;
+			let color2 = 170-color1;
+			body.style.setProperty('--primary', `oklch(100% 0.25 ${Math.random()*360})`);
+			body.style.setProperty('--secondary', `oklch(100% 0.25 ${color2})`);
+		}
+		setBackgroundColor();
+
+		function init() {
+			let letterIndex = 0;
+			for (let letter of sourceText) {
+				if (letter == "/") {
+					let spacer = document.createElement('div');
+					spacer.classList.add('spacer');
+					container.appendChild(spacer);
+					continue
+				}
+
+				// create slinky parent
+				let slinky = document.createElement('span');
+				slinky.classList.add('slinky');
+				slinky.dataset.move = 0;
+				slinky.dataset.index = letterIndex;
+				slinky.innerHTML = `<span class="letter">${letter}</span>`;
+				container.appendChild(slinky);
+
+				// create slinky children
+				for (let i=0; i<totalSlinkies; i++) {
+					let child = document.createElement('div');
+					child.innerHTML = letter;
+					child.style.zIndex = totalSlinkies-i;
+					child.style.setProperty('--secondary', `oklch(100% 0.25 ${Math.random()*360})`);
+					slinky.appendChild(child);
+				}
+
+				// animate slinky
+				setTimeout(() => {
+					move(slinky);
+				}, 500 + letterIndex*50)
+
+				letterIndex++;
+			}
+		}
+		function move(slinky) {
+			let divs = slinky.querySelectorAll('div');
+			let delay = 1000 + divs.length*50;
+			let letterIndex = parseInt(slinky.dataset.index);
+			let mult = 1;
+			if (letterIndex%2 == 0) {
+				mult = -1;
+			}
+			let note = notes[letterIndex%notes.length];
+
+			// move elements
+			if (parseInt(slinky.dataset.move) == 0 ) {
+
+				playNote(true, note + Math.round(Math.random()*3+2));
+
+				let translateX = 0;
+				let translateY = Math.random()*25;
+				let rotateX = Math.random()*90-45;
+				let rotateY = Math.random()*90-45;
+				let rotateZ = Math.random()*90-45;
+				let weight = Math.round(Math.random()*800+100);
+				let serif = Math.round(Math.random()*100);
+
+				let i = 0;
+				for (let div of divs) {
+					let percent = 1-i/divs.length;
+					setTimeout(() => {
+						div.style.transform = `translate(${translateX*percent}%, ${translateY*percent*mult}dvh) rotateX(${rotateX*percent}deg) rotateY(${rotateY*percent}deg) rotateZ(${rotateZ*percent}deg) scale(${1+(percent*0.5)})`;
+						div.style.fontVariationSettings = `"wght" ${weight}, "SRFF" ${serif}`;
+					}, 50)
+					i++;
+				}
+				slinky.dataset.move = 1;
+
+				// loop
+				setTimeout(() => {move(slinky)}, delay);
+
+			} else {
+
+				playNote(false, note + Math.round(Math.random()*2+2));
+
+				let transform = `translate(0%, 0%) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
+				let i = 0;
+				for (let div of divs) {
+					setTimeout(() => {
+						div.style.transform = transform;
+						div.style.fontVariationSettings = `"wght" 600, "SRFF" 0`;
+					}, 50)
+					i++;
+				}
+				slinky.dataset.move = 0;
+				
+				// loop
+				setTimeout(() => {move(slinky)}, delay);
+			}
+		}
+		init();
+	</script>
+</body>

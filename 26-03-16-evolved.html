@@ -1,0 +1,273 @@
+<head>
+	<script src="https://unpkg.com/tone"></script>
+	<style>
+		@font-face {
+			font-family: "Limkin";
+			src: url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.ttf") format(truetype),
+				url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff") format(woff),
+				url("https://toomuchtype.com/fonts/limkin/variable/TMT-LimkinVF.woff2") format(woff2);
+			font-weight: 100 900;
+		}
+		body {
+			background-color: var(--primary);
+			margin: 0;
+			font-family: "Limkin";
+			font-variation-settings: "wght" 600, "SRFF" 0;
+			font-size: 15vmin;
+			line-height: .8em;
+			letter-spacing: -0.04em;
+		}
+		.container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100dvh;
+			text-align: center;
+			overflow: hidden;
+		}
+		.slinkys {
+			position: relative;
+		}
+		.slinky {
+			position: relative;
+		}
+		.letter {
+			color: transparent;
+		}
+		.spacer {
+			height: 0;
+		}
+		.slinky div {
+			top: 0;
+			left: 0;
+			position: absolute;
+			transform: rotate(0deg) scale(1);
+			transition: 1s linear(0, -0.008 11%, -0.025 14.6%, -0.054 17.9%, -0.152 24.1%, -0.408 35%, -0.439 37.5%, -0.436 39.6%, -0.405 41.3%, -0.35 42.8%, -0.156 45.6%, 0.153 48.1%, 1.05 53.4%, 1.284 56%, 1.413 59%, 1.441 61.5%, 1.418 64.4%, 1.146 76.2%, 1.047 82.7%, 1.023 85.8%, 1.008 89.3%, 1), font-size 0s;
+			transform-style: preserve-3d;
+			color: var(--secondary);
+			text-shadow: unset;
+			backface-visibility: hidden;
+			-webkit-backface-visibility: hidden;
+			transform: translateZ(0); /* Forces GPU acceleration */
+			will-change: transform, font-variation-settings;
+		}
+		.slinky div:nth-child(2) {
+			color: var(--primary);
+			-webkit-text-stroke: 3px black;
+			paint-order: stroke fill;
+		}
+		.controls {
+			position: fixed;
+			bottom: 0;
+			margin: 0 auto;
+			display: flex;
+			padding: 40px;
+			max-width: 400px;
+			width: 100%;
+			gap: 10px;
+		}
+		.input-text {
+			width: 100%;
+			font-size: 24px;
+			line-height: 1em;
+			padding: calc(10px + .2em) 10px 10px 10px;
+			border-radius: 80px;
+			border: unset;
+			font-family: inherit;
+			font-variation-settings: inherit;
+			text-align: center;
+			background-color: white;
+			color: black;
+		}
+		.input-text::placeholder {
+			color: var(--primary);
+		}
+		.input-text:focus {
+			outline: unset;
+		}
+		.input-button {
+			font-size: 24px;
+			line-height: 1em;
+			padding: calc(10px + .2em) 10px 10px 10px;
+			border-radius: 80px;
+			border: unset;
+			font-family: inherit;
+			font-variation-settings: inherit;
+			text-align: center;
+			background-color: black;
+			color: var(--primary);
+			cursor: pointer;
+			transition: transform .2s;
+		}
+		.input-button:hover {
+			transform: scale(1.1);
+		}
+		.input-button:active {
+			transform: scale(0.95);
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="slinkies"></div>
+		<div class="controls">
+			<input type="text" class="input-text" placeholder="Type here!" spellcheck="false">
+			<button class="input-button" onclick="init();">GO</button>
+		</div>
+	</div>
+	<script>
+		// animation
+		var sourceText = "";
+		const totalSlinkies = 80;
+		const body = document.querySelector('body');
+		const container = document.querySelector('.slinkies');
+
+		function setBackgroundColor() {
+			let color1 = Math.random()*360;
+			let color2 = 170-color1;
+			body.style.setProperty('--primary', `oklch(100% 0.25 ${Math.random()*360})`);
+			body.style.setProperty('--secondary', `oklch(100% 0.25 ${color2})`);
+		}
+		setBackgroundColor();
+
+		let loops = [];
+		function init() {
+			setBackgroundColor();
+			for (let loop of loops) {
+				clearTimeout(loop);
+			}
+			initLoops = [];
+			sourceText = document.querySelector('.input-text').value;
+			container.innerHTML = '';
+
+			let letterIndex = 0;
+			for (let letter of sourceText) {
+				if (letter == "/") {
+					let spacer = document.createElement('div');
+					spacer.classList.add('spacer');
+					container.appendChild(spacer);
+					continue
+				}
+
+				// create slinky parent
+				let slinky = document.createElement('span');
+				slinky.classList.add('slinky');
+				slinky.dataset.move = 0;
+				slinky.dataset.index = letterIndex;
+				slinky.innerHTML = `<span class="letter">${letter}</span>`;
+				container.appendChild(slinky);
+
+				// create slinky children
+				for (let i=0; i<totalSlinkies; i++) {
+					let child = document.createElement('div');
+					child.innerHTML = letter;
+					child.style.zIndex = totalSlinkies-i;
+					child.style.setProperty('--secondary', `black`);
+					slinky.appendChild(child);
+				}
+
+				// create sounds
+				let panValue = (letterIndex / (sourceText.length - 1)) * 2 - 1;
+				let panner = new Tone.Panner(panValue).toDestination();
+
+				let synth1 = new Tone.PolySynth(Tone.Synth).connect(panner);
+				synth1.set({
+					oscillator: { type: "square" },
+					envelope: {
+						attack: 0.75,
+						decay: 1,
+						sustain: 0,
+						release: 1
+					},
+					volume: -20
+				});
+
+				let synth2 = new Tone.PolySynth(Tone.Synth).connect(panner);
+				synth2.set({
+					oscillator: { type: "sine" },
+					envelope: { 
+						attack: 0.5,
+						decay: 5,
+						sustain: 0.5,
+						release: 0.25
+					},
+					volume: -20
+				});
+
+				slinky.synth1 = synth1;
+				slinky.synth2 = synth2;
+				slinky.panner = panner;
+
+				// animate slinky
+				initLoops.push(setTimeout(() => {
+					move(slinky);
+				}, 500 + letterIndex*50))
+
+				letterIndex++;
+			}
+		}
+
+		let moveLoop;
+		let notes = ["Eb","G","Bb","D"];
+		function move(slinky) {
+			console.log(slinky.synth2)
+			let divs = slinky.querySelectorAll('div');
+			let delay = 1000 + sourceText.length*50;
+			let letterIndex = parseInt(slinky.dataset.index);
+			let mult = 1;
+			if (letterIndex%2 == 0) {
+				mult = -1;
+			}
+			let note = notes[letterIndex%notes.length];
+
+			// move elements
+			if (parseInt(slinky.dataset.move) == 0 ) {
+				slinky.synth1.triggerAttackRelease(note + Math.round(Math.random()*3+2), "4n");
+
+				let translateX = 0;
+				let translateY = Math.random()*25;
+				let rotateX = Math.random()*90-45;
+				let rotateY = Math.random()*90-45;
+				let rotateZ = Math.random()*90-45;
+				let weight = Math.round(Math.random()*800+100);
+				let serif = Math.round(Math.random()*100);
+
+				let i = 0;
+				for (let div of divs) {
+					let percent = 1-i/divs.length;
+					loops.push(setTimeout(() => {
+						div.style.transform = `translate(${translateX*percent}%, ${translateY*percent*mult}dvh) translateZ(0) rotateX(${rotateX*percent}deg) rotateY(${rotateY*percent}deg) rotateZ(${rotateZ*percent}deg) scale(${1+(percent*0.5)})`;
+					}, 50))
+					i++;
+				}
+				slinky.dataset.move = 1;
+
+				// loop
+				loops.push(setTimeout(() => {move(slinky)}, delay));
+
+			} else {
+				slinky.synth2.triggerAttackRelease(note + Math.round(Math.random()*3+2), "4n");
+
+				let transform = `translate(0%, 0%) translateZ(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
+				let i = 0;
+				for (let div of divs) {
+					loops.push(setTimeout(() => {
+						div.style.transform = transform;
+					}, 50))
+					i++;
+				}
+				slinky.dataset.move = 0;
+				
+				// loop
+				loops.push(setTimeout(() => {move(slinky)}, delay));
+			}
+		}
+
+		let inputText = document.querySelector('.input-text');
+		inputText.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter') {
+				init();
+			}
+		});
+	</script>
+</body>

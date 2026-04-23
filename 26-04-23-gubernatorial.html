@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Gubenatorial</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.mayor {
+			width: 100vw;
+			height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.mayor img {
+			width: 200px;
+			height: 200px;
+			object-fit: contain;
+			image-rendering: pixelated;
+		}
+		.mayor[data-talking="0"] .mayor-talking {
+			display: none;
+		}
+		.mayor[data-talking="1"] .mayor-default {
+			display: none;
+		}
+		.text {
+			position: fixed;
+			bottom: 0;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			padding: 200px 0 0 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			font-family: "Comic Sans MS", sans-serif;
+		}
+	</style>
+</head>
+<body>
+	
+	<div class="mayor" data-talking="0">
+		<img src="/26-04-23-gubernatorial/face1.gif" class="mayor-default">
+		<img src="/26-04-23-gubernatorial/face2.gif" class="mayor-talking">
+	</div>
+
+	<div class="text">
+		
+	</div>
+
+	<script>
+		let phrases = [
+			"i am the mayor",
+			"its time for the percolator",
+			"plz vote for me"
+		]
+
+		let mayor = document.querySelector('.mayor');
+		let text = document.querySelector('.text');
+		setInterval(() => {
+			mayor.dataset.talking = 1;
+			text.innerHTML = phrases[Math.floor(Math.random()*phrases.length)];
+
+			setTimeout(() => {
+				mayor.dataset.talking = 0;
+				text.innerHTML = '';
+			}, 2500)
+
+		}, 5000)
+	</script>
+</body>
+</html>
